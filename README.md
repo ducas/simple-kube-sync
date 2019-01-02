@@ -27,8 +27,19 @@ The project is built as a multi-targetted container based of the **buildpack-dep
 
 ## How do you use it?
 
-It can be deployed as simply as running -
+Get your git repo URL ready...
 
-    $ kubectl run simple-kube-sync --schedule "*/5 * * * *" --env "GIT_REPO=[my_repo_url]" --image ducas/simple-kube-sync
+### Without RBAC
 
-Just change [my_repo_url] to the URL of the repo you want to clone and you're off!
+    sed "s|__GIT_REPO__|[my_url]|g" \
+      https://raw.githubusercontent.com/ducas/simple-kube-sync/master/scripts/cronjob.yaml \
+      > kubectl apply -f -
+
+### With RBAC
+
+    sed "s|__GIT_REPO__|[my_url]|g" \
+      https://raw.githubusercontent.com/ducas/simple-kube-sync/master/scripts/cronjob_rbac.yaml \
+      > kubectl apply -f -
+
+
+The above commands deploy a CronJob that runs the application with your git repo URL.

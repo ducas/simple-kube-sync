@@ -25,7 +25,7 @@ metadata:
   name: simple-kube-sync
   namespace: default
 spec:
-  schedule: "*/1 * * * *"
+  schedule: "*/10 * * * *"
   concurrencyPolicy: Forbid
   jobTemplate:
     spec:
