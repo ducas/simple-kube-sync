@@ -1,0 +1,22 @@
+FROM __BASEIMAGE_ARCH__/buildpack-deps
+
+__CROSS_ADD https://github.com/multiarch/qemu-user-static/releases/download/v2.12.0/qemu-__QEMU_ARCH__eb-static /usr/bin/qemu-__QEMU_ARCH__-static
+
+# install kubectl
+
+RUN apt-get update && apt-get install -y apt-transport-https
+
+RUN curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+RUN echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | tee -a /etc/apt/sources.list.d/kubernetes.list
+
+RUN apt-get update && apt-get install -y kubectl
+
+# copy src contents
+
+WORKDIR /sks
+COPY . .
+
+ENV LOG_LEVEL="INFO"
+
+# run the entrypoint
+ENTRYPOINT ["/bin/bash", "/sks/entrypoint.sh"]
