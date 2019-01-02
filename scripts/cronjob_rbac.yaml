@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: simple-kube-sync
+  namespace: default
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: simple-kube-sync
+  labels:
+    k8s-app: simple-kube-sync
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: simple-kube-sync
+  namespace: default
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: simple-kube-sync
+  namespace: default
+spec:
+  schedule: "*/1 * * * *"
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: simple-kube-sync
+          containers:
+          - name: simple-kube-sync
+            image: ducas/simple-kube-sync:v0.1-alpha
+            env:
+            - name: GIT_REPO
+              value: __GIT_REPO__
+          restartPolicy: OnFailure
